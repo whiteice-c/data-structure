@@ -8,100 +8,120 @@
 
 #define Max 3
 /*1、建立基本结构体：
-	包括数据和指向下一个结点的指针*/ 
-/*基本结构体*/
+	包括栈结构体和结点*/ 
 typedef struct node
 {
 	int data;
 	struct node *next;
-}LinkNode
+}LinkNode;
 
 typedef struct
 {
-	int m;/*表示栈中有效元素的个数*/
+	int n;/*表示栈中有效元素的个数*/
 	LinkNode *top;/*保存栈中第一个有效结点的地址*/ 
 }LinkStack;
 
 /*1、创建空链式栈*/
 LinkStack *create_empty_linkstack()
 {
-	LinkStack *s;
+	LinkStack *s = NULL;
 	s = (LinkStack *)malloc(sizeof(LinkStack));
+	s->top = (LinkNode *)malloc(sizeof(LinkNode));/*这里一定注意也要给结点分配空间
+												造成产生野指针，是程序奔溃*/
 	
 	s->n = 0;
-	s->top = NULL;
+	s->top->next = NULL;
 	return s;
 }
 
 /*2、判断链式栈是否为空*/
-int is_empty_linkstack()
+int is_empty_linkstack(LinkStack *s)
 {
-	return s->top == NULL; 
+	return s->top->next == NULL; 
 }
 
-/*3、入栈，类似于链表的头插法*/
+/*3、入栈，类似于链表的头插法，把栈顶当做链表头结点*/
 void push_data_linkstack(LinkStack *s,int data)
-{
-	LinkNode *temp;
+{		
+	LinkNode *temp = NULL;
 	temp = (LinkNode *)malloc(sizeof(LinkNode));
 	
 	temp->data = data;
-	temp->next = NULL;
+	temp->next = s->top->next;
 	s->top->next = temp;
-	s->n++;
+	s->n++;/*相当于栈顶位置的变化*/
 }
 
-/*4、出栈*/ 
-DataType pop_data_linkstack(LinkStack *s)
+/*4、出栈，类似于单链表删除结点的操作*/ 
+LinkNode* pop_data_linkstack(LinkStack *s)
 {
-	s->top = s->top->next->next;
-	s->n--;
-}
-
-/*5、获得栈顶元素的值*/
-DataType get_top_linkstack(LinkStack *s)
-{
+	LinkNode *temp = NULL;
+	temp = (LinkNode *)malloc(sizeof(LinkNode));
+	temp = s->top->next;
 	
-}
-/*4、入栈*/
-void push_stack(stack_t *q,int value)
-{
-	q->top += 1; 
-	q->buf[q->top] = value;
-	printf("%d",q->buf[q->top]);
-}
-
-/*5、出队*/
-int pop_stack(stack_t *q)
-{
-	int temp;
+	if((s->top->next == NULL) || (s->top == NULL))
+		return;
 		
-	temp = q->buf[q->top];
-	printf("%d",q->buf[q->top]);
-	q->top -= 1;
+	s->top->next = s->top->next->next;
+	s->n--;
 	
 	return temp;
 }
 
+/*5、获得栈顶元素的值*/
+int get_top_linkstack(LinkStack *s)
+{
+	if(s->top->next == NULL)
+		return;
+	
+	printf("\nstack->top = %d\n",s->top->next->data);
+	return s->top->next->data;
+}
+
+/*6、打印链表数据：遍历每个结点并输出他们的数据域*/
+void printf_LinkStack(LinkStack *s)
+{
+	LinkNode *temp = NULL;
+	temp = (LinkNode *)malloc(sizeof(LinkNode));
+	
+	if((s->top->next == NULL) || (s->top == NULL))
+		return;
+		
+	temp = s->top->next;
+	while(temp != NULL)
+	{
+		printf("%d\n",temp->data);	
+		temp = temp->next;
+	}
+	
+	printf("\n\n");
+}
+
 int main()
 {
-	static int i = 7;
-	int j = 2;
-	stack_t *q;
+	int i = 0;
+	LinkStack *s = NULL;
+	LinkNode *p = NULL;
+	LinkNode *del = NULL;
 	
-	q = create_empty_stack();
+	p = (LinkNode *)malloc(sizeof(LinkNode));
+	del = (LinkNode *)malloc(sizeof(LinkNode));
 	
-	while(j--)
+	s = create_empty_linkstack();
+	
+	for(i = 0;i<5;i++)
 	{
-		while(!is_full_stack(q))
-		{
-			push_stack(q,i);
-			i++;	
-		}	
-		while(!is_empty_stack(q))
-		{
-			pop_stack(q);	
-		}
-		putchar('\n');
+		push_data_linkstack(s,i);
 	}
+	printf_LinkStack(s);
+	
+	for(i=0;i<3;i++)
+	{
+		p = pop_data_linkstack(s);
+		printf("%d\n",p->data);
+		del = p;
+		free(del);	
+	}
+	
+	get_top_linkstack(s);
 }
