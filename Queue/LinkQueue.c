@@ -30,6 +30,7 @@ LinkQueue* create_empty_linkqueue()
 	q->rear = (LinkNode *)malloc(sizeof(LinkNode));
 	
 	q->front = q->rear = NULL;
+	
 	return q;
 }
 
@@ -46,15 +47,18 @@ void enqueue(LinkQueue *q,int data)
 	temp = (LinkNode *)malloc(sizeof(LinkNode));
 	
 	temp->data = data;
+	temp->next = NULL;/*注意这里一定要使指向下一个结点的指针为NULL，防止指针地址”失控“*/ 
+	
+	/*空队列时，入队元素唯一，既是头结点又是尾结点*/
 	if(is_empty_queue(q))
 	{
-		q->front = temp;/*第一次将数据给队头*/
+		q->front = temp;
 		q->rear = temp;	
 	}
 	else
 	{
 		q->rear->next = temp;
-		q->rear = q->rear->next;
+		q->rear = temp;		
 	}
 }
 
@@ -65,7 +69,7 @@ int dequeue(LinkQueue *q)
 	int value;
 	temp = (LinkNode *)malloc(sizeof(LinkNode));
 	
-	if(q->front == NULL)
+	if(is_empty_queue(q))
 		return;
 		
 	temp = q->front;
@@ -80,17 +84,21 @@ int dequeue(LinkQueue *q)
 /*5、打印队列*/
 void printf_LinkQueue(LinkQueue *q)
 {
-	printf("\n当前队列内容：\n");
 	LinkNode *temp = NULL;
 	temp = (LinkNode *)malloc(sizeof(LinkNode));
 	
-	temp = q->front;
-	while(temp != q->rear)
+	if(is_empty_queue(q))
+		return;
+	
+	temp = q->front;	
+	printf("\n当前队列内容：\n");
+
+	while(temp != NULL)
 	{
 		printf("%d\n",temp->data);
 		temp = temp->next;	
 	}
-	printf("%d\n",temp->data);/*q->rear也有值*/
+	
 	printf("\n");
 }
 
@@ -102,6 +110,17 @@ int main()
 	
 	q = create_empty_linkqueue();
 
+	enqueue(q,1);
+	printf_LinkQueue(q);;
+	temp = dequeue(q);
+	printf("%d\n",temp);
+	
+	enqueue(q,2);
+	printf_LinkQueue(q);
+	
+	temp = dequeue(q);
+	printf("%d\n",temp);
+
 	for(i=0;i<5;i++)
 	{
 		enqueue(q,i);
@@ -113,18 +132,4 @@ int main()
 		temp = dequeue(q);
 		printf("%d\n",temp);
 	}
-	temp = dequeue(q);
-	printf("%d\n",temp);
-	printf_LinkQueue(q);
-	for(i=0;i<5;i++)
-	{
-		enqueue(q,i);
-	} 
-	printf_LinkQueue(q);
-	for(i=0;i<3;i++)
-	{
-		temp = dequeue(q);
-		printf("%d\n",temp);
-	}
-	printf_LinkQueue(q);
 }
