@@ -166,7 +166,7 @@ BTree_T * dequeue(LinkQueue *q)
 
 /*7、层次遍历二叉树:首先使根结点入队，然后循环判断队列是否为空，不为空，
 	则开始出队，并获取出队元素指向的结点，并入队他的左右孩子的元素，直到
-	队列为空*/
+	队列为空，,队列使二叉树成员变得有序*/
 void levelorder_traversal(BTree_T *root)
 { 	
 	LinkQueue *q;
@@ -188,13 +188,13 @@ void levelorder_traversal(BTree_T *root)
 	}
 }
 
-/*8、按层次顺序建立普通二叉树：采用递归的方法，建立根节点,然后建立左右孩子
+/*8、先序法建立普通二叉树：采用递归的方法，建立根节点,然后建立左右孩子
 	参数说明：a[]:树结点数据  num:当前数结点编号  n：树结点总数(2^z-1)
 	所有左孩子结点满足：2*num <= n，右孩子结点满足：2*num+1<=n*/
 BTree_T *create_binary_tree(char a[],int num,int n)
 {
 	BTree_T *root;
-	
+		
 	if(a[num] != ' ')
 	{
 		root = malloc_btree(root,a[num]);		
@@ -204,50 +204,25 @@ BTree_T *create_binary_tree(char a[],int num,int n)
 		return NULL;
 	}
 	
-	root->L_Child = (BTree_T*)create_full_binary_tree(a,2*num,n);
-
-	root->R_Child = (BTree_T*)create_full_binary_tree(a,2*num+1,n);
+	if(2*num+1 <= n)
+	{
+		root->L_Child = (BTree_T*)create_binary_tree(a,2*num,n);
+		root->R_Child = (BTree_T*)create_binary_tree(a,2*num+1,n);		
+	}
 	
 	return root;
-}
-
-/*9、先序建立普通二叉树：采用递归的方法，建立根节点,然后建立左右孩子
-	参数说明：a[]:树结点数据  num:当前数结点编号  n：树结点总数(2^z-1)
-	所有左孩子结点满足：2*num <= n，右孩子结点满足：2*num+1<=n*/
-void preorder_create_binary_tree(BTree_T *root,char a[],int num)
-{
-	char ch = a[num++];
-		
-	if(ch == ';')
-	{
-		return;	
-	}
-	
-	if(ch !=' ')
-	{
-		root = (BTree_T*)malloc(sizeof(BTree_T));
-		root->data = ch;
-		preorder_create_binary_tree(root->L_Child,a,num);
-		preorder_create_binary_tree(root->R_Child,a,num);	
-	}
-	else
-	{
-		root = NULL;
-		num++;
-	}
 }
 
 int main()
 {
 	char a[] = {-1,'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O'};
 	char a1[] = {-1,'A','B','D',' ','C','E','F'};
-	char a2[] = {-1,'A','B',' ','C',' ',' ','D','E',' ',' ','F',' ',' ',';'};
+	char a2[] = {-1,'A','B',' ','C','D','E',' ',' ','F',' ',' ',';'};
 	int num = 1;/*二叉树结点一般从1开始计数*/
 	BTree_T *root;
 	
 	//root = create_full_binary_tree(a,num,sizeof(a)/sizeof(a[0])-1);
 	root = create_binary_tree(a1,num,sizeof(a1)/sizeof(a1[0])-1);
-	//preorder_create_binary_tree(root,a2,num);
 	
 	preorder_traversal(root);
 	printf("\n\n");
