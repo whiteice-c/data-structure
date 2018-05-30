@@ -26,7 +26,7 @@ Seqlist *Create_Seqlist()
 		return NULL;
 	}
 	
-	memset(l,0,sizeof(Seqlist));/*此处不初始化程序会跑飞*/
+	memset(l,0,sizeof(Seqlist));/*此处不初始化程序会跑飞，理解为要对指针完全的初始化*/
 	
 	return l;
 }
@@ -37,7 +37,7 @@ int is_full_Seqlist(Seqlist *l)
 	return l->n == Max ? 1:0;
 }
 
-/*初始化插入数据*/
+/*初始化，建立一个顺序表，逐个插入即可*/
 void insert_data_Seqlist(Seqlist *l,int *a,int length)
 {
 	int i;
